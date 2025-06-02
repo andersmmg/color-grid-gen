@@ -35,7 +35,7 @@ This addon uses clipboard access to read Coolors URLs for importing color palett
 
 ## Compatibility
 
-- Minimum Blender Version: 4.0.0
+- Minimum Blender Version: 4.2.0
 - License: [GPL-3.0-or-later](https://spdx.org/licenses/GPL-3.0-or-later.html)
 
 ## Support
