@@ -101,14 +101,13 @@ class GenerateTextureOperator(Operator):
 
     def execute(self, context):
         settings = context.scene.color_palette_settings
-        colors = [(item.color_start, item.color_end) for item in settings.colors]
+        colors = [(gamma_correct(item.color_start), gamma_correct(item.color_end)) for item in settings.colors]
 
         if not colors:
             self.report({'WARNING'}, "No colors in palette")
             return {'CANCELLED'}
 
         # Get the active image from the image editor
-        self.report({'INFO'}, "Space: {}".format(context.area.spaces.active.image))
         image = context.area.spaces.active.image if context.area.spaces.active.type == 'IMAGE_EDITOR' else None
 
         if settings.create_new:
@@ -162,7 +161,12 @@ class GenerateTextureOperator(Operator):
                                             1.0
                                         ]
                                     else:
-                                        pixels[idx:idx + 4] = [color[0][0], color[0][1], color[0][2], 1.0]
+                                        pixels[idx:idx + 4] = [
+                                            color[0][0],
+                                            color[0][1],
+                                            color[0][2],
+                                            1.0
+                                        ]
 
         image.pixels = pixels
         image['color_grid'] = {
@@ -175,10 +179,21 @@ class GenerateTextureOperator(Operator):
         image.update()
 
         # Switch to the new or updated texture
-        context.area.spaces.active.image = image  # Switch to the new or updated texture
+        context.area.spaces.active.image = image
 
         self.report({'INFO'}, "Texture generated: {}".format(settings.texture_name))
         return {'FINISHED'}
+
+def gamma_correct(color):
+    corrected = []
+    for channel in color[:3]:  # Only apply to RGB channels
+        if channel <= 0.0031308:
+            corrected.append(channel * 12.92)
+        else:
+            corrected.append(1.055 * (channel ** (1 / 2.4)) - 0.055)
+    if len(color) > 3:
+        corrected.append(color[3])  # Preserve alpha channel
+    return corrected
 
 class UpdatePaletteFromCoolorsOperator(Operator):
     bl_idname = "texture.update_palette_from_coolors"
