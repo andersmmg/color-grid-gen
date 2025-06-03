@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "color_grid_texture_gen"
-version = "0.1.0"
+version = "0.1.1"
 name = "Color Grid Texture Generator"
 tagline = "Generate customizable color grid textures"
 maintainer = "Joshua Anderson <andersmmg@duck.com>"
