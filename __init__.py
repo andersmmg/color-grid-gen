@@ -1,6 +1,6 @@
 import bpy
 from bpy.props import FloatVectorProperty, CollectionProperty, PointerProperty, IntProperty, BoolProperty, StringProperty, EnumProperty
-from bpy.types import Panel, Operator, PropertyGroup
+from bpy.types import FloatVectorAttribute, Panel, Operator, PropertyGroup
 
 class ColorPaletteItem(PropertyGroup):
     color_start: FloatVectorProperty(name="Start Color", subtype='COLOR', default=(1.0, 1.0, 1.0), min=0.0, max=1.0)
@@ -78,6 +78,8 @@ class ColorGridTextureGeneratorPanel(Panel):
 class AddColorOperator(Operator):
     bl_idname = "texture.add_color"
     bl_label = "Add Color"
+    bl_description = "Add a color to the palette"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         settings = context.scene.color_palette_settings
@@ -87,6 +89,8 @@ class AddColorOperator(Operator):
 class RemoveColorOperator(Operator):
     bl_idname = "texture.remove_color"
     bl_label = "Remove Color"
+    bl_description = "Remove a color from the palette"
+    bl_options = {'REGISTER', 'UNDO'}
 
     index: bpy.props.IntProperty()
 
@@ -98,6 +102,8 @@ class RemoveColorOperator(Operator):
 class GenerateTextureOperator(Operator):
     bl_idname = "texture.generate_texture"
     bl_label = "Generate Texture"
+    bl_description = "Generate a texture using the specified settings"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         settings = context.scene.color_palette_settings
@@ -184,7 +190,8 @@ class GenerateTextureOperator(Operator):
         self.report({'INFO'}, "Texture generated: {}".format(settings.texture_name))
         return {'FINISHED'}
 
-def gamma_correct(color):
+def gamma_correct(color: FloatVectorAttribute) -> FloatVectorAttribute:
+    """Apply gamma correction to a color."""
     corrected = []
     for channel in color[:3]:  # Only apply to RGB channels
         if channel <= 0.0031308:
@@ -198,6 +205,8 @@ def gamma_correct(color):
 class UpdatePaletteFromCoolorsOperator(Operator):
     bl_idname = "texture.update_palette_from_coolors"
     bl_label = "Update Palette from Coolors URL"
+    bl_description = "Update the palette from a Coolors URL"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         import re
