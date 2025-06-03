@@ -45,6 +45,7 @@ For issues, feature requests, or contributions, visit the [GitHub repository](ht
 ## Maintainer
 
 Developed by Joshua Anderson
+
 Contact: andersmmg@duck.com
 
 ## License
